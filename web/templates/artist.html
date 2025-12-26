@@ -1,0 +1,75 @@
+{{define "artist.html"}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Artist.Name}} - Groupie Tracker</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <header>
+        <h1><a href="/">Groupie Tracker</a></h1>
+        <nav>
+            <a href="/">Home</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="artist-detail">
+                <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}" class="artist-image">
+                
+                <div class="artist-info">
+                    <h2>{{.Artist.Name}}</h2>
+                    
+                    <div class="info-section">
+                        <h3>Information</h3>
+                        <p><strong>Created:</strong> {{.Artist.CreationDate}}</p>
+                        <p><strong>First Album:</strong> {{.Artist.FirstAlbum}}</p>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>Members</h3>
+                        <ul>
+                            {{range .Artist.Members}}
+                            <li>{{.}}</li>
+                            {{end}}
+                        </ul>
+                    </div>
+                    
+                    <div class="info-section">
+                        <h3>Concert Dates & Locations</h3>
+                        {{if .Relation.DatesLocations}}
+                        <div class="concerts-list">
+                            {{range $location, $dates := .Relation.DatesLocations}}
+                            <div class="concert-entry">
+                                <h4>{{$location}}</h4>
+                                <ul>
+                                    {{range $dates}}
+                                    <li>{{.}}</li>
+                                    {{end}}
+                                </ul>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{else}}
+                        <p>No concert information available.</p>
+                        {{end}}
+                    </div>
+                    
+                    <div class="actions">
+                        <a href="/" class="btn">Back to List</a>
+                        <a href="/map/{{.Artist.ID}}" class="btn">View on Map</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Groupie Tracker</p>
+    </footer>
+</body>
+</html>
+{{end}}
