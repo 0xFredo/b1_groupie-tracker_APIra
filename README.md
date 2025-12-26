@@ -1,4 +1,4 @@
-# APIra (Groupie Tracker) by Babylon
+# APIra (Groupie Tracker) by BabYlon
 
 A web application that displays information about bands and artists using the Groupie Tracker API.
 
