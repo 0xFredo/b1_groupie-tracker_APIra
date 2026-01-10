@@ -61,7 +61,8 @@ func main() {
 	mux.HandleFunc("/map/", handlers.GeoHandler)
 
 	server := &http.Server{
-		Addr: *addr,
+		Addr:    *addr,
+		Handler: mux,
 	}
 
 	// Start server and open browser
