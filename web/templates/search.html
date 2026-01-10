@@ -1,10 +1,10 @@
-{{define "artist.html"}}
+{{define "search.html"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Artist.Name}} - Groupie Tracker</title>
+    <title>Search Results - Groupie Tracker</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -12,15 +12,16 @@
         <h1><a href="/">Groupie Tracker</a></h1>
         <nav class="nav-tabs">
             <a href="/" class="nav-tab">Home</a>
-            <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
+            <a href="#" class="nav-tab search-toggle active" id="search-toggle">Search</a>
         </nav>
-        <div class="search-expandable" id="search-expandable">
+        <div class="search-expandable expanded" id="search-expandable">
             <form action="/search" method="GET">
                 <input type="text" 
                        id="search-input" 
                        name="q" 
                        placeholder="Search artists, members, locations..." 
-                       autocomplete="off">
+                       autocomplete="off"
+                       value="{{.Query}}">
                 <button type="submit">Search</button>
             </form>
             <div id="suggestions" class="suggestions"></div>
@@ -29,53 +30,33 @@
     
     <main>
         <div class="container">
-            <div class="artist-detail">
-                <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}" class="artist-image">
-                
-                <div class="artist-info">
-                    <h2>{{.Artist.Name}}</h2>
-                    
-                    <div class="info-section">
-                        <h3>Information</h3>
-                        <p><strong>Created:</strong> {{.Artist.CreationDate}}</p>
-                        <p><strong>First Album:</strong> {{.Artist.FirstAlbum}}</p>
-                    </div>
-                    
-                    <div class="info-section">
-                        <h3>Members</h3>
-                        <ul>
-                            {{range .Artist.Members}}
-                            <li>{{.}}</li>
-                            {{end}}
-                        </ul>
-                    </div>
-                    
-                    <div class="info-section">
-                        <h3>Concert Dates & Locations</h3>
-                        {{if .Relation.DatesLocations}}
-                        <div class="concerts-list">
-                            {{range $location, $dates := .Relation.DatesLocations}}
-                            <div class="concert-entry">
-                                <h4>{{$location}}</h4>
-                                <ul>
-                                    {{range $dates}}
-                                    <li>{{.}}</li>
-                                    {{end}}
-                                </ul>
-                            </div>
-                            {{end}}
-                        </div>
-                        {{else}}
-                        <p>No concert information available.</p>
-                        {{end}}
-                    </div>
-                    
-                    <div class="actions">
-                        <a href="/" class="btn">Back to List</a>
-                        <a href="/map/{{.Artist.ID}}" class="btn">View on Map</a>
+            {{if .Query}}
+            <h2>Search Results for "{{.Query}}"</h2>
+            {{if .Results}}
+            <p>Found {{len .Results}} result(s)</p>
+            <div class="artists-grid">
+                {{range .Results}}
+                <div class="artist-card">
+                    <img src="{{.Image}}" alt="{{.Name}}">
+                    <h3>{{.Name}}</h3>
+                    <p>Created: {{.CreationDate}}</p>
+                    <p>Members: {{len .Members}}</p>
+                    <p>First Album: {{.FirstAlbum}}</p>
+                    <div class="card-actions">
+                        <a href="/artist/{{.ID}}" class="btn">View Details</a>
+                        <a href="/map/{{.ID}}" class="btn">View Map</a>
                     </div>
                 </div>
+                {{end}}
             </div>
+            {{else}}
+            <p>No results found for "{{.Query}}".</p>
+            <a href="/" class="btn">Back to Home</a>
+            {{end}}
+            {{else}}
+            <h2>Search</h2>
+            <p>Enter a search term to find artists, members, or locations.</p>
+            {{end}}
         </div>
     </main>
     
@@ -134,7 +115,6 @@
         document.addEventListener('click', (e) => {
             if (!searchExpandable.contains(e.target) && !searchToggle.contains(e.target)) {
                 suggestionsDiv.innerHTML = '';
-                searchExpandable.classList.remove('expanded');
             }
         });
     </script>

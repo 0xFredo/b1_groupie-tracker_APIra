@@ -10,9 +10,21 @@
 <body>
     <header>
         <h1><a href="/">Groupie Tracker</a></h1>
-        <nav>
-            <a href="/">Home</a>
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab">Home</a>
+            <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
         </nav>
+        <div class="search-expandable" id="search-expandable">
+            <form action="/search" method="GET">
+                <input type="text" 
+                       id="search-input" 
+                       name="q" 
+                       placeholder="Search artists, members, locations..." 
+                       autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
     </header>
     
     <main>
@@ -43,6 +55,61 @@
     </footer>
     
     <script>
+        // Search toggle
+        const searchToggle = document.getElementById('search-toggle');
+        const searchExpandable = document.getElementById('search-expandable');
+        const searchInput = document.getElementById('search-input');
+        const suggestionsDiv = document.getElementById('suggestions');
+        
+        searchToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchExpandable.classList.toggle('expanded');
+            if (searchExpandable.classList.contains('expanded')) {
+                searchInput.focus();
+            }
+        });
+        
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                suggestionsDiv.innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/suggestions?q=${encodeURIComponent(query)}`);
+                const suggestions = await response.json();
+                
+                if (suggestions && suggestions.length > 0) {
+                    suggestionsDiv.innerHTML = suggestions.map(s => 
+                        `<div class="suggestion-item">
+                            <span class="suggestion-text">${s.text}</span>
+                            <span class="suggestion-type">${s.type}</span>
+                        </div>`
+                    ).join('');
+                    
+                    document.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            searchInput.value = item.querySelector('.suggestion-text').textContent;
+                            suggestionsDiv.innerHTML = '';
+                            searchInput.form.submit();
+                        });
+                    });
+                } else {
+                    suggestionsDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!searchExpandable.contains(e.target) && !searchToggle.contains(e.target)) {
+                suggestionsDiv.innerHTML = '';
+                searchExpandable.classList.remove('expanded');
+            }
+        });
+        
         // Get locations data from the map element's data attribute
         const mapElement = document.getElementById('map');
         const locationsJson = mapElement.getAttribute('data-locations');

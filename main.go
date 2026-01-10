@@ -57,7 +57,6 @@ func main() {
 	mux.HandleFunc("/artist/", handlers.ArtistHandler)
 	mux.HandleFunc("/search", handlers.SearchHandler)
 	mux.HandleFunc("/api/suggestions", handlers.SuggestionsHandler)
-	mux.HandleFunc("/filters", handlers.FiltersHandler)
 	mux.HandleFunc("/map/", handlers.GeoHandler)
 
 	server := &http.Server{

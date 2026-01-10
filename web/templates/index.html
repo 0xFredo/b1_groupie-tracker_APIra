@@ -10,77 +10,78 @@
 <body>
     <header>
         <h1><a href="/">Groupie Tracker</a></h1>
-        <nav>
-            <a href="/">Home</a>
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab active">Home</a>
+            <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
         </nav>
+        <div class="search-expandable" id="search-expandable">
+            <form action="/search" method="GET">
+                <input type="text" 
+                       id="search-input" 
+                       name="q" 
+                       placeholder="Search artists, members, locations..." 
+                       autocomplete="off">
+                <button type="submit">Search</button>
+            </form>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
     </header>
     
     <main>
         <div class="container">
             <h2>Artists & Bands</h2>
             
-            <!-- Search Bar -->
-            <div class="search-container">
-                <form action="/search" method="GET">
-                    <input type="text" 
-                           id="search-input" 
-                           name="q" 
-                           placeholder="Search artists, members, locations..." 
-                           autocomplete="off">
-                    <button type="submit">Search</button>
-                </form>
-                <div id="suggestions" class="suggestions"></div>
-            </div>
-            
-            <!-- Filters -->
-            <div class="filters-container">
-                <h3>Filters</h3>
-                <form action="/filters" method="GET">
-                    <div class="filter-group">
-                        <label>Creation Date:</label>
-                        <input type="number" name="creation_min" placeholder="Min" min="1900" max="2024">
-                        <input type="number" name="creation_max" placeholder="Max" min="1900" max="2024">
+            <!-- Filters Sidebar -->
+            <div class="content-with-filters">
+                <aside class="filters-sidebar">
+                    <h3>Filters</h3>
+                    <form action="/" method="GET">
+                        <div class="filter-group">
+                            <label>Creation Date:</label>
+                            <input type="number" name="creation_min" placeholder="Min" min="1900" max="2024">
+                            <input type="number" name="creation_max" placeholder="Max" min="1900" max="2024">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>First Album:</label>
+                            <input type="number" name="album_min" placeholder="Min" min="1900" max="2024">
+                            <input type="number" name="album_max" placeholder="Max" min="1900" max="2024">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Number of Members:</label>
+                            <input type="number" name="members_min" placeholder="Min" min="1" max="20">
+                            <input type="number" name="members_max" placeholder="Max" min="1" max="20">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>Location:</label>
+                            <input type="text" name="location" placeholder="Enter location">
+                        </div>
+                        
+                        <button type="submit">Apply Filters</button>
+                        <a href="/" class="btn-reset">Reset</a>
+                    </form>
+                </aside>
+                
+                <!-- Artists Grid -->
+                <div class="artists-grid">
+                    {{range .}}
+                    <div class="artist-card">
+                        <img src="{{.Image}}" alt="{{.Name}}">
+                        <h3>{{.Name}}</h3>
+                        <p>Created: {{.CreationDate}}</p>
+                        <p>Members: {{len .Members}}</p>
+                        <p>First Album: {{.FirstAlbum}}</p>
+                        <div class="card-actions">
+                            <a href="/artist/{{.ID}}" class="btn">View Details</a>
+                            <a href="/map/{{.ID}}" class="btn">View Map</a>
+                        </div>
                     </div>
-                    
-                    <div class="filter-group">
-                        <label>First Album:</label>
-                        <input type="number" name="album_min" placeholder="Min" min="1900" max="2024">
-                        <input type="number" name="album_max" placeholder="Max" min="1900" max="2024">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label>Number of Members:</label>
-                        <input type="number" name="members_min" placeholder="Min" min="1" max="20">
-                        <input type="number" name="members_max" placeholder="Max" min="1" max="20">
-                    </div>
-                    
-                    <div class="filter-group">
-                        <label>Location:</label>
-                        <input type="text" name="location" placeholder="Enter location">
-                    </div>
-                    
-                    <button type="submit">Apply Filters</button>
-                    <a href="/" class="btn-reset">Reset</a>
-                </form>
-            </div>
-            
-            <!-- Artists Grid -->
-            <div class="artists-grid">
-                {{range .}}
-                <div class="artist-card">
-                    <img src="{{.Image}}" alt="{{.Name}}">
-                    <h3>{{.Name}}</h3>
-                    <p>Created: {{.CreationDate}}</p>
-                    <p>Members: {{len .Members}}</p>
-                    <p>First Album: {{.FirstAlbum}}</p>
-                    <div class="card-actions">
-                        <a href="/artist/{{.ID}}" class="btn">View Details</a>
-                        <a href="/map/{{.ID}}" class="btn">View Map</a>
-                    </div>
+                    {{else}}
+                    <p>No artists found.</p>
+                    {{end}}
                 </div>
-                {{else}}
-                <p>No artists found.</p>
-                {{end}}
             </div>
         </div>
     </main>
@@ -90,8 +91,20 @@
     </footer>
     
     <script>
-        // Search suggestions
+        // Search toggle
+        const searchToggle = document.getElementById('search-toggle');
+        const searchExpandable = document.getElementById('search-expandable');
         const searchInput = document.getElementById('search-input');
+        
+        searchToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchExpandable.classList.toggle('expanded');
+            if (searchExpandable.classList.contains('expanded')) {
+                searchInput.focus();
+            }
+        });
+        
+        // Search suggestions
         const suggestionsDiv = document.getElementById('suggestions');
         
         searchInput.addEventListener('input', async (e) => {
@@ -113,7 +126,6 @@
                         </div>`
                     ).join('');
                     
-                    // Add click handlers
                     document.querySelectorAll('.suggestion-item').forEach(item => {
                         item.addEventListener('click', () => {
                             searchInput.value = item.querySelector('.suggestion-text').textContent;
@@ -129,10 +141,11 @@
             }
         });
         
-        // Close suggestions on click outside
+        // Close suggestions and search on click outside
         document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !suggestionsDiv.contains(e.target)) {
+            if (!searchExpandable.contains(e.target) && !searchToggle.contains(e.target)) {
                 suggestionsDiv.innerHTML = '';
+                searchExpandable.classList.remove('expanded');
             }
         });
     </script>

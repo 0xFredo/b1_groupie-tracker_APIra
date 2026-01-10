@@ -6,9 +6,16 @@ import (
 	"net/http"
 	"strings"
 
+	"groupie-tracker/internal/api"
 	"groupie-tracker/internal/services"
 	"groupie-tracker/internal/utils"
 )
+
+// SearchData holds search page data
+type SearchData struct {
+	Query   string
+	Results []api.Artist
+}
 
 // SearchHandler handles search form submission
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -18,19 +25,22 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	query := strings.TrimSpace(r.URL.Query().Get("q"))
-	if query == "" {
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
+
+	data := SearchData{
+		Query: query,
 	}
 
-	results, err := services.SearchArtists(query)
-	if err != nil {
-		log.Println("Error searching:", err)
-		utils.ErrorHandler(w, http.StatusInternalServerError)
-		return
+	if query != "" {
+		results, err := services.SearchArtists(query)
+		if err != nil {
+			log.Println("Error searching:", err)
+			utils.ErrorHandler(w, http.StatusInternalServerError)
+			return
+		}
+		data.Results = results
 	}
 
-	if err := utils.RenderTemplate(w, "index.html", results); err != nil {
+	if err := utils.RenderTemplate(w, "search.html", data); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.ErrorHandler(w, http.StatusInternalServerError)
 	}
