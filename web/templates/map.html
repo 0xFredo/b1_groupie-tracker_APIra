@@ -19,7 +19,7 @@
         <div class="container">
             <h2>Concert Locations: {{.Artist.Name}}</h2>
             
-            <div id="map" style="height: 600px; width: 100%;"></div>
+            <div id="map" style="height: 600px; width: 100%;" data-locations='{{json .Locations}}'></div>
             
             <div class="locations-list">
                 <h3>Locations</h3>
@@ -43,20 +43,10 @@
     </footer>
     
     <script>
-        // Simple map implementation using Leaflet (you can use any map API)
-        // For now, just display the data as a list
-        // In a real implementation, you would use OpenStreetMap, Google Maps, etc.
-        
-        const locations = [
-            {{range .Locations}}
-            {
-                name: "{{.Name}}",
-                lat: {{.Latitude}},
-                lng: {{.Longitude}},
-                dates: [{{range .Dates}}"{{.}}",{{end}}]
-            },
-            {{end}}
-        ];
+        // Get locations data from the map element's data attribute
+        const mapElement = document.getElementById('map');
+        const locationsJson = mapElement.getAttribute('data-locations');
+        const locations = JSON.parse(locationsJson || '[]');
         
         console.log('Locations:', locations);
         
