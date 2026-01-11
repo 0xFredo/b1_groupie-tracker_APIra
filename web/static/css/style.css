@@ -319,10 +319,12 @@ header nav a {
     border-radius: 8px;
     display: flex;
     gap: 30px;
+    align-items: flex-start;
 }
 
 .artist-image {
     max-width: 400px;
+    width: 400px;
     border-radius: 8px;
 }
 

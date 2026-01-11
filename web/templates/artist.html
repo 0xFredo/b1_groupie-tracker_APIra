@@ -31,10 +31,10 @@
                 <div class="concerts-list">
                     {{range $location, $dates := .Data.Relation.DatesLocations}}
                     <div class="concert-entry">
-                        <h4>{{$location}}</h4>
+                        <h4>{{formatLocation $location}}</h4>
                         <ul>
                             {{range $dates}}
-                            <li>{{.}}</li>
+                            <li>{{formatDate .}}</li>
                             {{end}}
                         </ul>
                     </div>

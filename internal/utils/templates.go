@@ -5,6 +5,9 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"strconv"
+	"strings"
+	"time"
 )
 
 var templates *template.Template
@@ -19,6 +22,36 @@ type PageData struct {
 	Data            interface{}
 }
 
+// formatLocation converts "city-country" or "city_state-country" to "City, Country" or "City State, Country"
+func formatLocation(loc string) string {
+	// Replace underscores with spaces
+	loc = strings.ReplaceAll(loc, "_", " ")
+	// Split by dash
+	parts := strings.Split(loc, "-")
+	for i, part := range parts {
+		parts[i] = strings.Title(strings.TrimSpace(part))
+	}
+	return strings.Join(parts, ", ")
+}
+
+// formatDate converts "DD-MM-YYYY" to "DD Month YYYY"
+func formatDate(dateStr string) string {
+	parts := strings.Split(dateStr, "-")
+	if len(parts) != 3 {
+		return dateStr
+	}
+	day, _ := strconv.Atoi(parts[0])
+	month, _ := strconv.Atoi(parts[1])
+	year, _ := strconv.Atoi(parts[2])
+
+	if month < 1 || month > 12 {
+		return dateStr
+	}
+
+	t := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.UTC)
+	return t.Format("2 January 2006")
+}
+
 // InitTemplates loads all HTML templates
 func InitTemplates() error {
 	var err error
@@ -30,6 +63,8 @@ func InitTemplates() error {
 			}
 			return string(bytes), nil
 		},
+		"formatLocation": formatLocation,
+		"formatDate":     formatDate,
 	}).ParseGlob(filepath.Join("web", "templates", "*.html"))
 	return err
 }
