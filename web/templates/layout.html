@@ -11,7 +11,7 @@
     <header>
         <h1><a href="/">Groupie Tracker</a></h1>
         <nav class="nav-tabs">
-            <a href="/" class="nav-tab{{if eq .ActiveTab "home"}} active{{end}}">Home</a>
+            <a href="/" class="nav-tab{{if eq .ActiveTab "home"}} active{{end}}">Artists</a>
             <a href="#" class="nav-tab search-toggle{{if eq .ActiveTab "search"}} active{{end}}" id="search-toggle">Search</a>
             <a href="/map" class="nav-tab{{if eq .ActiveTab "map"}} active{{end}}">Map</a>
         </nav>
@@ -25,7 +25,6 @@
                        value="{{.SearchQuery}}">
                 <button type="submit">Search</button>
             </form>
-            <div id="suggestions" class="suggestions"></div>
         </div>
     </header>
     

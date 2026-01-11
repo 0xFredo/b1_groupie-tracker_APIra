@@ -22,7 +22,7 @@ body {
 header {
     background: #333;
     color: #fff;
-    padding: 1rem 0;
+    padding: 1rem 0 0 0;
     text-align: center;
 }
 
@@ -67,14 +67,15 @@ header nav a {
 .search-expandable {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease, padding 0.3s ease;
-    background: #444;
+    transition: max-height 0.3s ease, padding 0.3s ease, background 0.3s ease;
+    background: transparent;
     padding: 0 20px;
 }
 
 .search-expandable.expanded {
     max-height: 100px;
     padding: 15px 20px;
+    background: #444;
 }
 
 .search-expandable form {
