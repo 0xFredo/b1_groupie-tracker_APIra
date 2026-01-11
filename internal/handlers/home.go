@@ -53,7 +53,13 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := utils.RenderTemplate(w, "index.html", artists); err != nil {
+	pageData := utils.PageData{
+		ActiveTab:       "home",
+		ContentTemplate: "index",
+		Data:            artists,
+	}
+
+	if err := utils.RenderTemplate(w, "index.html", pageData); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.ErrorHandler(w, http.StatusInternalServerError)
 	}

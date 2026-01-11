@@ -1,161 +1,68 @@
 {{define "index.html"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groupie Tracker</title>
-    <link rel="stylesheet" href="/static/css/style.css">
-</head>
-<body>
-    <header>
-        <h1><a href="/">Groupie Tracker</a></h1>
-        <nav class="nav-tabs">
-            <a href="/" class="nav-tab active">Home</a>
-            <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
-            <a href="/map" class="nav-tab">Map</a>
-        </nav>
-        <div class="search-expandable" id="search-expandable">
-            <form action="/search" method="GET">
-                <input type="text" 
-                       id="search-input" 
-                       name="q" 
-                       placeholder="Search artists, members, locations..." 
-                       autocomplete="off">
-                <button type="submit">Search</button>
-            </form>
-            <div id="suggestions" class="suggestions"></div>
-        </div>
-    </header>
+{{template "layout.html" .}}
+{{end}}
+
+{{define "index-content"}}
+<div class="container">
+    <h2>Artists & Bands</h2>
     
-    <main>
-        <div class="container">
-            <h2>Artists & Bands</h2>
-            
-            <!-- Filters Sidebar -->
-            <div class="content-with-filters">
-                <aside class="filters-sidebar">
-                    <h3>Filters</h3>
-                    <form action="/" method="GET">
-                        <div class="filter-group">
-                            <label>Creation Date:</label>
-                            <input type="number" name="creation_min" placeholder="Min" min="1900" max="2024">
-                            <input type="number" name="creation_max" placeholder="Max" min="1900" max="2024">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label>First Album:</label>
-                            <input type="number" name="album_min" placeholder="Min" min="1900" max="2024">
-                            <input type="number" name="album_max" placeholder="Max" min="1900" max="2024">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label>Number of Members:</label>
-                            <input type="number" name="members_min" placeholder="Min" min="1" max="20">
-                            <input type="number" name="members_max" placeholder="Max" min="1" max="20">
-                        </div>
-                        
-                        <div class="filter-group">
-                            <label>Location:</label>
-                            <div class="tooltip-container" style="display: block;">
-                                <input type="text" name="location" placeholder="Unavailable" disabled class="input-disabled">
-                                <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
-                            </div>
-                        </div>
-                        
-                        <button type="submit">Apply Filters</button>
-                        <a href="/" class="btn-reset">Reset</a>
-                    </form>
-                </aside>
+    <!-- Filters Sidebar -->
+    <div class="content-with-filters">
+        <aside class="filters-sidebar">
+            <h3>Filters</h3>
+            <form action="/" method="GET">
+                <div class="filter-group">
+                    <label>Creation Date:</label>
+                    <input type="number" name="creation_min" placeholder="Min" min="1900" max="2024">
+                    <input type="number" name="creation_max" placeholder="Max" min="1900" max="2024">
+                </div>
                 
-                <!-- Artists Grid -->
-                <div class="artists-grid">
-                    {{range .}}
-                    <div class="artist-card">
-                        <img src="{{.Image}}" alt="{{.Name}}">
-                        <h3>{{.Name}}</h3>
-                        <p>Created: {{.CreationDate}}</p>
-                        <p>Members: {{len .Members}}</p>
-                        <p>First Album: {{.FirstAlbum}}</p>
-                        <div class="card-actions">
-                            <a href="/artist/{{.ID}}" class="btn">View Details</a>
-                            <div class="tooltip-container">
-                                <span class="btn btn-disabled">View Map</span>
-                                <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
-                            </div>
-                        </div>
+                <div class="filter-group">
+                    <label>First Album:</label>
+                    <input type="number" name="album_min" placeholder="Min" min="1900" max="2024">
+                    <input type="number" name="album_max" placeholder="Max" min="1900" max="2024">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Number of Members:</label>
+                    <input type="number" name="members_min" placeholder="Min" min="1" max="20">
+                    <input type="number" name="members_max" placeholder="Max" min="1" max="20">
+                </div>
+                
+                <div class="filter-group">
+                    <label>Location:</label>
+                    <div class="tooltip-container" style="display: block;">
+                        <input type="text" name="location" placeholder="Unavailable" disabled class="input-disabled">
+                        <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
                     </div>
-                    {{else}}
-                    <p>No artists found.</p>
-                    {{end}}
+                </div>
+                
+                <button type="submit">Apply Filters</button>
+                <a href="/" class="btn-reset">Reset</a>
+            </form>
+        </aside>
+        
+        <!-- Artists Grid -->
+        <div class="artists-grid">
+            {{range .Data}}
+            <div class="artist-card">
+                <img src="{{.Image}}" alt="{{.Name}}">
+                <h3>{{.Name}}</h3>
+                <p>Created: {{.CreationDate}}</p>
+                <p>Members: {{len .Members}}</p>
+                <p>First Album: {{.FirstAlbum}}</p>
+                <div class="card-actions">
+                    <a href="/artist/{{.ID}}" class="btn">View Details</a>
+                    <div class="tooltip-container">
+                        <span class="btn btn-disabled">View Map</span>
+                        <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
+                    </div>
                 </div>
             </div>
+            {{else}}
+            <p>No artists found.</p>
+            {{end}}
         </div>
-    </main>
-    
-    <footer>
-        <p>&copy; 2025 Groupie Tracker</p>
-    </footer>
-    
-    <script>
-        // Search toggle
-        const searchToggle = document.getElementById('search-toggle');
-        const searchExpandable = document.getElementById('search-expandable');
-        const searchInput = document.getElementById('search-input');
-        
-        searchToggle.addEventListener('click', (e) => {
-            e.preventDefault();
-            searchExpandable.classList.toggle('expanded');
-            if (searchExpandable.classList.contains('expanded')) {
-                searchInput.focus();
-            }
-        });
-        
-        // Search suggestions
-        const suggestionsDiv = document.getElementById('suggestions');
-        
-        searchInput.addEventListener('input', async (e) => {
-            const query = e.target.value.trim();
-            if (query.length < 2) {
-                suggestionsDiv.innerHTML = '';
-                return;
-            }
-            
-            try {
-                const response = await fetch(`/api/suggestions?q=${encodeURIComponent(query)}`);
-                const suggestions = await response.json();
-                
-                if (suggestions && suggestions.length > 0) {
-                    suggestionsDiv.innerHTML = suggestions.map(s => 
-                        `<div class="suggestion-item">
-                            <span class="suggestion-text">${s.text}</span>
-                            <span class="suggestion-type">${s.type}</span>
-                        </div>`
-                    ).join('');
-                    
-                    document.querySelectorAll('.suggestion-item').forEach(item => {
-                        item.addEventListener('click', () => {
-                            searchInput.value = item.querySelector('.suggestion-text').textContent;
-                            suggestionsDiv.innerHTML = '';
-                            searchInput.form.submit();
-                        });
-                    });
-                } else {
-                    suggestionsDiv.innerHTML = '';
-                }
-            } catch (error) {
-                console.error('Error fetching suggestions:', error);
-            }
-        });
-        
-        // Close suggestions and search on click outside
-        document.addEventListener('click', (e) => {
-            if (!searchExpandable.contains(e.target) && !searchToggle.contains(e.target)) {
-                suggestionsDiv.innerHTML = '';
-                searchExpandable.classList.remove('expanded');
-            }
-        });
-    </script>
-</body>
-</html>
+    </div>
+</div>
 {{end}}

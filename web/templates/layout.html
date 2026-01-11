@@ -4,26 +4,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Groupie Tracker</title>
+    <title>{{if .Title}}{{.Title}} - {{end}}Groupie Tracker</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
     <header>
         <h1><a href="/">Groupie Tracker</a></h1>
-        <nav>
-            <a href="/">Home</a>
+        <nav class="nav-tabs">
+            <a href="/" class="nav-tab{{if eq .ActiveTab "home"}} active{{end}}">Home</a>
+            <a href="#" class="nav-tab search-toggle{{if eq .ActiveTab "search"}} active{{end}}" id="search-toggle">Search</a>
+            <a href="/map" class="nav-tab{{if eq .ActiveTab "map"}} active{{end}}">Map</a>
         </nav>
+        <div class="search-expandable{{if .SearchExpanded}} expanded{{end}}" id="search-expandable">
+            <form action="/search" method="GET">
+                <input type="text" 
+                       id="search-input" 
+                       name="q" 
+                       placeholder="Search artists, members, locations..." 
+                       autocomplete="off"
+                       value="{{.SearchQuery}}">
+                <button type="submit">Search</button>
+            </form>
+            <div id="suggestions" class="suggestions"></div>
+        </div>
     </header>
     
     <main>
-        {{template "content" .}}
+        {{if eq .ContentTemplate "index"}}{{template "index-content" .}}{{end}}
+        {{if eq .ContentTemplate "artist"}}{{template "artist-content" .}}{{end}}
+        {{if eq .ContentTemplate "search"}}{{template "search-content" .}}{{end}}
+        {{if eq .ContentTemplate "map"}}{{template "map-content" .}}{{end}}
     </main>
     
     <footer>
-        <p>&copy; 2025 Groupie Tracker</p>
+        <p>&copy; 2026 Groupie Tracker</p>
     </footer>
     
-    {{template "scripts" .}}
+    <script>
+        const searchToggle = document.getElementById('search-toggle');
+        const searchExpandable = document.getElementById('search-expandable');
+        const searchInput = document.getElementById('search-input');
+        const suggestionsDiv = document.getElementById('suggestions');
+        
+        searchToggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchExpandable.classList.toggle('expanded');
+            if (searchExpandable.classList.contains('expanded')) {
+                searchInput.focus();
+            }
+        });
+        
+        searchInput.addEventListener('input', async (e) => {
+            const query = e.target.value.trim();
+            if (query.length < 2) {
+                suggestionsDiv.innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/suggestions?q=${encodeURIComponent(query)}`);
+                const suggestions = await response.json();
+                
+                if (suggestions && suggestions.length > 0) {
+                    suggestionsDiv.innerHTML = suggestions.map(s => 
+                        `<div class="suggestion-item">
+                            <span class="suggestion-text">${s.text}</span>
+                            <span class="suggestion-type">${s.type}</span>
+                        </div>`
+                    ).join('');
+                    
+                    document.querySelectorAll('.suggestion-item').forEach(item => {
+                        item.addEventListener('click', () => {
+                            searchInput.value = item.querySelector('.suggestion-text').textContent;
+                            suggestionsDiv.innerHTML = '';
+                            searchInput.form.submit();
+                        });
+                    });
+                } else {
+                    suggestionsDiv.innerHTML = '';
+                }
+            } catch (error) {
+                console.error('Error fetching suggestions:', error);
+            }
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!searchExpandable.contains(e.target) && !searchToggle.contains(e.target)) {
+                suggestionsDiv.innerHTML = '';
+                searchExpandable.classList.remove('expanded');
+            }
+        });
+    </script>
 </body>
 </html>
 {{end}}

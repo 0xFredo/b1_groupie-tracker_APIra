@@ -45,12 +45,19 @@ func ArtistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	data := ArtistData{
+	artistData := ArtistData{
 		Artist:   artist,
 		Relation: relation,
 	}
 
-	if err := utils.RenderTemplate(w, "artist.html", data); err != nil {
+	pageData := utils.PageData{
+		Title:           artist.Name,
+		ActiveTab:       "",
+		ContentTemplate: "artist",
+		Data:            artistData,
+	}
+
+	if err := utils.RenderTemplate(w, "artist.html", pageData); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.ErrorHandler(w, http.StatusInternalServerError)
 	}

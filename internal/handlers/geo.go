@@ -14,8 +14,14 @@ func GeoHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	pageData := utils.PageData{
+		Title:           "Map",
+		ActiveTab:       "map",
+		ContentTemplate: "map",
+	}
+
 	// Map functionality is temporarily disabled
-	if err := utils.RenderTemplate(w, "map.html", nil); err != nil {
+	if err := utils.RenderTemplate(w, "map.html", pageData); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.ErrorHandler(w, http.StatusInternalServerError)
 	}

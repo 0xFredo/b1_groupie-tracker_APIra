@@ -9,6 +9,16 @@ import (
 
 var templates *template.Template
 
+// PageData holds common data for all pages
+type PageData struct {
+	Title           string
+	ActiveTab       string
+	SearchQuery     string
+	SearchExpanded  bool
+	ContentTemplate string
+	Data            interface{}
+}
+
 // InitTemplates loads all HTML templates
 func InitTemplates() error {
 	var err error

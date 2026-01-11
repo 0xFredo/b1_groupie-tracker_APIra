@@ -6,16 +6,9 @@ import (
 	"net/http"
 	"strings"
 
-	"groupie-tracker/internal/api"
 	"groupie-tracker/internal/services"
 	"groupie-tracker/internal/utils"
 )
-
-// SearchData holds search page data
-type SearchData struct {
-	Query   string
-	Results []api.Artist
-}
 
 // SearchHandler handles search form submission
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
@@ -26,8 +19,12 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 
 	query := strings.TrimSpace(r.URL.Query().Get("q"))
 
-	data := SearchData{
-		Query: query,
+	pageData := utils.PageData{
+		Title:           "Search Results",
+		ActiveTab:       "search",
+		ContentTemplate: "search",
+		SearchQuery:     query,
+		SearchExpanded:  true,
 	}
 
 	if query != "" {
@@ -37,10 +34,10 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 			utils.ErrorHandler(w, http.StatusInternalServerError)
 			return
 		}
-		data.Results = results
+		pageData.Data = results
 	}
 
-	if err := utils.RenderTemplate(w, "search.html", data); err != nil {
+	if err := utils.RenderTemplate(w, "search.html", pageData); err != nil {
 		log.Println("Error rendering template:", err)
 		utils.ErrorHandler(w, http.StatusInternalServerError)
 	}
