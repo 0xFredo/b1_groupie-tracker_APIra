@@ -9,7 +9,6 @@ import (
 	"groupie-tracker/internal/utils"
 )
 
-// HomeHandler displays the main page with artist list
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		utils.ErrorHandler(w, http.StatusNotFound)
@@ -21,14 +20,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Check if any filter parameters are present
 	hasFilters := r.URL.RawQuery != ""
 
 	var artists []api.Artist
 	var err error
 
 	if hasFilters {
-		// Parse filter parameters
 		filters := services.FilterParams{
 			CreationDateMin: parseIntParam(r, "creation_min", 0),
 			CreationDateMax: parseIntParam(r, "creation_max", 9999),

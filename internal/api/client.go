@@ -24,7 +24,6 @@ var (
 	lastFetch  time.Time
 )
 
-// FetchAPI retrieves all API data with caching
 func FetchAPI() (*APIData, error) {
 	cacheMutex.RLock()
 	if cache != nil && time.Since(lastFetch) < cacheTimeout {
@@ -36,14 +35,12 @@ func FetchAPI() (*APIData, error) {
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
 
-	// Double-check after acquiring write lock
 	if cache != nil && time.Since(lastFetch) < cacheTimeout {
 		return cache, nil
 	}
 
 	data := &APIData{}
 
-	// Fetch all data in parallel
 	var wg sync.WaitGroup
 	errChan := make(chan error, 4)
 
@@ -80,7 +77,6 @@ func FetchAPI() (*APIData, error) {
 	wg.Wait()
 	close(errChan)
 
-	// Check for errors
 	for err := range errChan {
 		return nil, err
 	}
@@ -90,7 +86,6 @@ func FetchAPI() (*APIData, error) {
 	return data, nil
 }
 
-// fetchJSON performs HTTP GET and decodes JSON
 func fetchJSON(url string, target interface{}) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -106,7 +101,6 @@ func fetchJSON(url string, target interface{}) error {
 	return json.NewDecoder(resp.Body).Decode(target)
 }
 
-// GetArtistByID returns a specific artist by ID
 func GetArtistByID(id int) (*Artist, error) {
 	data, err := FetchAPI()
 	if err != nil {
@@ -121,7 +115,6 @@ func GetArtistByID(id int) (*Artist, error) {
 	return nil, fmt.Errorf("artist not found")
 }
 
-// GetRelationByID returns relations for a specific artist
 func GetRelationByID(id int) (*Relation, error) {
 	data, err := FetchAPI()
 	if err != nil {

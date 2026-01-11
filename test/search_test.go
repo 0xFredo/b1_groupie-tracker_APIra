@@ -6,7 +6,6 @@ import (
 	"groupie-tracker/internal/services"
 )
 
-// TestSearchArtists tests the search functionality
 func TestSearchArtists(t *testing.T) {
 	tests := []struct {
 		query    string
@@ -35,7 +34,6 @@ func TestSearchArtists(t *testing.T) {
 	}
 }
 
-// TestGetSuggestions tests search suggestions
 func TestGetSuggestions(t *testing.T) {
 	suggestions, err := services.GetSuggestions("qu")
 	if err != nil {
@@ -44,7 +42,6 @@ func TestGetSuggestions(t *testing.T) {
 
 	t.Logf("Got %d suggestions for 'qu'", len(suggestions))
 
-	// Test empty query
 	emptySuggestions, err := services.GetSuggestions("")
 	if err != nil {
 		t.Fatalf("GetSuggestions with empty query failed: %v", err)

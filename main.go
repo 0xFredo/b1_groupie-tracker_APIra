@@ -32,27 +32,20 @@ func openBrowser(url string) {
 }
 
 func main() {
-
 	defaultPort := "8080"
 	if envPort := os.Getenv("PORT"); envPort != "" {
 		defaultPort = envPort
 	}
-	addr := flag.String("addr", ":"+defaultPort, "HTTP network address, e.g. :8080")
+	addr := flag.String("addr", ":"+defaultPort, "HTTP network address")
 	flag.Parse()
 
-	// Initialize templates
 	if err := utils.InitTemplates(); err != nil {
 		log.Fatal("Failed to load templates:", err)
 	}
 
-	// Setup routes
 	mux := http.NewServeMux()
-
-	// Static files
 	fs := http.FileServer(http.Dir("web/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
-
-	// Pages
 	mux.HandleFunc("/", handlers.HomeHandler)
 	mux.HandleFunc("/artist/", handlers.ArtistHandler)
 	mux.HandleFunc("/search", handlers.SearchHandler)
@@ -64,7 +57,6 @@ func main() {
 		Handler: mux,
 	}
 
-	// Start server and open browser
 	url := fmt.Sprintf("http://localhost%s", *addr)
 	log.Printf("Starting server on %s", url)
 	go func() {
@@ -75,5 +67,4 @@ func main() {
 	if err := server.ListenAndServe(); err != nil {
 		log.Fatalf("server failed: %v", err)
 	}
-
 }

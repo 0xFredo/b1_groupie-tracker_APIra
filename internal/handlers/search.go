@@ -10,7 +10,6 @@ import (
 	"groupie-tracker/internal/utils"
 )
 
-// SearchHandler handles search form submission
 func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		utils.ErrorHandler(w, http.StatusMethodNotAllowed)
@@ -43,7 +42,6 @@ func SearchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// SuggestionsHandler returns JSON suggestions for search bar
 func SuggestionsHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		utils.ErrorHandler(w, http.StatusMethodNotAllowed)

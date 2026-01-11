@@ -4,7 +4,6 @@ import (
 	"net/http"
 )
 
-// ErrorHandler renders error pages
 func ErrorHandler(w http.ResponseWriter, status int) {
 	w.WriteHeader(status)
 
@@ -22,5 +21,3 @@ func ErrorHandler(w http.ResponseWriter, status int) {
 
 	w.Write([]byte(message))
 }
-
-// Error handling utilities

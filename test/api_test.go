@@ -6,7 +6,6 @@ import (
 	"groupie-tracker/internal/api"
 )
 
-// TestFetchAPI tests the API client
 func TestFetchAPI(t *testing.T) {
 	data, err := api.FetchAPI()
 	if err != nil {
@@ -24,7 +23,6 @@ func TestFetchAPI(t *testing.T) {
 	t.Logf("Fetched %d artists", len(data.Artists))
 }
 
-// TestGetArtistByID tests fetching a specific artist
 func TestGetArtistByID(t *testing.T) {
 	artist, err := api.GetArtistByID(1)
 	if err != nil {
@@ -42,7 +40,6 @@ func TestGetArtistByID(t *testing.T) {
 	t.Logf("Fetched artist: %s", artist.Name)
 }
 
-// TestGetRelationByID tests fetching relations
 func TestGetRelationByID(t *testing.T) {
 	relation, err := api.GetRelationByID(1)
 	if err != nil {

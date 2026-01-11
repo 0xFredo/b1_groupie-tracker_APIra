@@ -7,9 +7,7 @@ import (
 	"groupie-tracker/internal/services"
 )
 
-// TestGeocodeLocations tests the geocoding functionality
 func TestGeocodeLocations(t *testing.T) {
-	// Skip this test in short mode as it makes external API calls
 	if testing.Short() {
 		t.Skip("Skipping geocoding test in short mode")
 	}
@@ -26,12 +24,10 @@ func TestGeocodeLocations(t *testing.T) {
 
 	t.Logf("Geocoded %d locations", len(locations))
 
-	// Verify at least some locations were geocoded
 	if len(locations) == 0 {
 		t.Log("Warning: No locations were successfully geocoded")
 	}
 
-	// Verify geocoded locations have valid coordinates
 	for _, loc := range locations {
 		if loc.Latitude == 0 && loc.Longitude == 0 {
 			t.Errorf("Location %s has invalid coordinates (0,0)", loc.Name)
@@ -39,5 +35,3 @@ func TestGeocodeLocations(t *testing.T) {
 		t.Logf("Location: %s (%.4f, %.4f)", loc.Name, loc.Latitude, loc.Longitude)
 	}
 }
-
-// Geolocation tests

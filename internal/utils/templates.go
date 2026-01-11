@@ -12,7 +12,6 @@ import (
 
 var templates *template.Template
 
-// PageData holds common data for all pages
 type PageData struct {
 	Title           string
 	ActiveTab       string
@@ -22,11 +21,8 @@ type PageData struct {
 	Data            interface{}
 }
 
-// formatLocation converts "city-country" or "city_state-country" to "City, Country" or "City State, Country"
 func formatLocation(loc string) string {
-	// Replace underscores with spaces
 	loc = strings.ReplaceAll(loc, "_", " ")
-	// Split by dash
 	parts := strings.Split(loc, "-")
 	for i, part := range parts {
 		parts[i] = strings.Title(strings.TrimSpace(part))
@@ -34,7 +30,6 @@ func formatLocation(loc string) string {
 	return strings.Join(parts, ", ")
 }
 
-// formatDate converts "DD-MM-YYYY" to "DD Month YYYY"
 func formatDate(dateStr string) string {
 	parts := strings.Split(dateStr, "-")
 	if len(parts) != 3 {
@@ -52,7 +47,6 @@ func formatDate(dateStr string) string {
 	return t.Format("2 January 2006")
 }
 
-// InitTemplates loads all HTML templates
 func InitTemplates() error {
 	var err error
 	templates, err = template.New("").Funcs(template.FuncMap{
@@ -69,9 +63,6 @@ func InitTemplates() error {
 	return err
 }
 
-// RenderTemplate renders a template with data
 func RenderTemplate(w http.ResponseWriter, tmpl string, data interface{}) error {
 	return templates.ExecuteTemplate(w, tmpl, data)
 }
-
-// Chargement/exécution templates

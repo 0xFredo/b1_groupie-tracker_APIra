@@ -10,20 +10,17 @@ import (
 	"groupie-tracker/internal/utils"
 )
 
-// ArtistData combines artist info with relations
 type ArtistData struct {
 	Artist   *api.Artist
 	Relation *api.Relation
 }
 
-// ArtistHandler displays detailed artist page with concerts
 func ArtistHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		utils.ErrorHandler(w, http.StatusMethodNotAllowed)
 		return
 	}
 
-	// Extract ID from path /artist/{id}
 	path := strings.TrimPrefix(r.URL.Path, "/artist/")
 	id, err := strconv.Atoi(path)
 	if err != nil || id < 1 {
