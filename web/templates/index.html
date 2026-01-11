@@ -13,6 +13,7 @@
         <nav class="nav-tabs">
             <a href="/" class="nav-tab active">Home</a>
             <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
+            <a href="/map" class="nav-tab">Map</a>
         </nav>
         <div class="search-expandable" id="search-expandable">
             <form action="/search" method="GET">
@@ -56,7 +57,10 @@
                         
                         <div class="filter-group">
                             <label>Location:</label>
-                            <input type="text" name="location" placeholder="Enter location">
+                            <div class="tooltip-container" style="display: block;">
+                                <input type="text" name="location" placeholder="Unavailable" disabled class="input-disabled">
+                                <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
+                            </div>
                         </div>
                         
                         <button type="submit">Apply Filters</button>
@@ -75,7 +79,10 @@
                         <p>First Album: {{.FirstAlbum}}</p>
                         <div class="card-actions">
                             <a href="/artist/{{.ID}}" class="btn">View Details</a>
-                            <a href="/map/{{.ID}}" class="btn">View Map</a>
+                            <div class="tooltip-container">
+                                <span class="btn btn-disabled">View Map</span>
+                                <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
+                            </div>
                         </div>
                     </div>
                     {{else}}

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Concert Locations - {{.Artist.Name}}</title>
+    <title>Map - Groupie Tracker</title>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -13,6 +13,7 @@
         <nav class="nav-tabs">
             <a href="/" class="nav-tab">Home</a>
             <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
+            <a href="/map" class="nav-tab active">Map</a>
         </nav>
         <div class="search-expandable" id="search-expandable">
             <form action="/search" method="GET">
@@ -29,24 +30,11 @@
     
     <main>
         <div class="container">
-            <h2>Concert Locations: {{.Artist.Name}}</h2>
-            
-            <div id="map" style="height: 600px; width: 100%;" data-locations='{{json .Locations}}'></div>
-            
-            <div class="locations-list">
-                <h3>Locations</h3>
-                {{range .Locations}}
-                <div class="location-item">
-                    <h4>{{.Name}}</h4>
-                    <p>Coordinates: {{.Latitude}}, {{.Longitude}}</p>
-                    <p>Dates: {{range .Dates}}{{.}} {{end}}</p>
-                </div>
-                {{else}}
-                <p>No location data available.</p>
-                {{end}}
+            <div class="api-error-message">
+                <h2>🗺️ Map Unavailable</h2>
+                <p>The geocoding API is currently broken. Sorry for the inconvenience.</p>
+                <a href="/" class="btn">Back to Home</a>
             </div>
-            
-            <a href="/artist/{{.Artist.ID}}" class="btn">Back to Artist</a>
         </div>
     </main>
     
@@ -55,7 +43,6 @@
     </footer>
     
     <script>
-        // Search toggle
         const searchToggle = document.getElementById('search-toggle');
         const searchExpandable = document.getElementById('search-expandable');
         const searchInput = document.getElementById('search-input');
@@ -109,21 +96,6 @@
                 searchExpandable.classList.remove('expanded');
             }
         });
-        
-        // Get locations data from the map element's data attribute
-        const mapElement = document.getElementById('map');
-        const locationsJson = mapElement.getAttribute('data-locations');
-        const locations = JSON.parse(locationsJson || '[]');
-        
-        console.log('Locations:', locations);
-        
-        // TODO: Initialize map library and add markers
-        // Example with Leaflet:
-        // const map = L.map('map').setView([locations[0].lat, locations[0].lng], 4);
-        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-        // locations.forEach(loc => {
-        //     L.marker([loc.lat, loc.lng]).addTo(map).bindPopup(loc.name);
-        // });
     </script>
 </body>
 </html>

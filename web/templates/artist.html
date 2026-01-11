@@ -13,6 +13,7 @@
         <nav class="nav-tabs">
             <a href="/" class="nav-tab">Home</a>
             <a href="#" class="nav-tab search-toggle" id="search-toggle">Search</a>
+            <a href="/map" class="nav-tab">Map</a>
         </nav>
         <div class="search-expandable" id="search-expandable">
             <form action="/search" method="GET">
@@ -72,7 +73,10 @@
                     
                     <div class="actions">
                         <a href="/" class="btn">Back to List</a>
-                        <a href="/map/{{.Artist.ID}}" class="btn">View on Map</a>
+                        <span class="btn btn-disabled tooltip-container">
+                            View on Map
+                            <span class="tooltip">The geocoding API is currently broken. Sorry for the inconvenience.</span>
+                        </span>
                     </div>
                 </div>
             </div>
